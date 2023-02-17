@@ -1,0 +1,65 @@
+
+global:
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      ingress.kubernetes.io/rewrite-target: "/"
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      alb.ingress.kubernetes.io/certificate-arn: "${main_certificate_arn}"
+      alb.ingress.kubernetes.io/inbound-cidrs: "0.0.0.0/0,::/0"
+      alb.ingress.kubernetes.io/listen-ports: "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
+      alb.ingress.kubernetes.io/load-balancer-name: main
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-Res-2019-08
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/group.name:  main
+    host: "${domain}"
+
+  identity:
+    auth:
+      enabled: true
+      publicIssuerUrl: "https://${domain}/auth/realms/camunda-platform"
+      operate:
+        redirectUrl: "https://${domain}/operate"
+      tasklist:
+        redirectUrl: "https://${domain}/tasklist"
+      optimize:
+        redirectUrl: "https://${domain}/optimize"
+
+identity:
+  enabled: true
+  contextPath: "/identity"
+  fullURL: "https://${domain}/identity"
+  firstUser:
+    username: ${first_user_username}
+    password: ${first_user_password}
+    email: ${first_user_email}
+    firstName: ${first_user_firstname}
+    lastName: ${first_user_lastname}
+
+operate:
+  contextPath: "/operate"
+
+optimize:
+  contextPath: "/optimize"
+
+tasklist:
+  contextPath: "/tasklist"
+
+zeebe-gateway:
+  ingress:
+    enabled: true
+    className: alb
+    annotations:
+      ingress.kubernetes.io/rewrite-target: "/"
+      alb.ingress.kubernetes.io/ssl-redirect: "443"
+      alb.ingress.kubernetes.io/certificate-arn: "${zeebe_certificate_arn}"
+      alb.ingress.kubernetes.io/inbound-cidrs: "0.0.0.0/0,::/0"
+      alb.ingress.kubernetes.io/listen-ports: "[{\"HTTP\": 80}, {\"HTTPS\":443}]"
+      alb.ingress.kubernetes.io/load-balancer-name: main
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-FS-1-2-Res-2019-08
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/group.name:  main
+    host: "zeebe.${domain}"
